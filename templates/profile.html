@@ -24,7 +24,11 @@
 <div class="profile-page">
   <a href="javascript:history.back()" class="back-link">← Back</a>
   <div class="profile-hero">
+    {% if photo_url(person) %}
+    <img src="{{ photo_url(person) }}" alt="{{ person.name }}" style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto 1.5rem;display:block;border:5px solid white;box-shadow:0 6px 24px rgba(0,0,0,.12);"/>
+    {% else %}
     <div class="avatar-lg" style="background:{{person.avatar_color}}">{{person.avatar_letter}}</div>
+    {% endif %}
     <h1>{{person.name}}</h1>
     <div class="meta">{{person.age}} years old &nbsp;·&nbsp; {{person.gender}} &nbsp;·&nbsp; 📍 {{person.location}}</div>
     <span class="card-status status-{{person.status.lower()}}">{{person.status}}</span>

@@ -31,7 +31,7 @@ textarea { resize:vertical; min-height:80px; }
     </div>
     <h2>Create Your Profile</h2>
 
-    <form method="POST" action="/register">
+    <form method="POST" action="/register" enctype="multipart/form-data">
       <div class="form-row">
         <div class="field">
           <label>Full Name</label>
@@ -99,6 +99,10 @@ textarea { resize:vertical; min-height:80px; }
           {% endfor %}
         </div>
         <input type="hidden" name="interests" id="interests-hidden"/>
+      </div>
+      <div class="field">
+        <label>Profile Photo <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+        <input type="file" name="photo" accept="image/*" style="padding:.5rem;"/>
       </div>
       <button type="submit" class="submit-btn">Join SilverHeart ♡</button>
     </form>

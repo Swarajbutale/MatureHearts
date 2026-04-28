@@ -1,12 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
-import sqlite3, os, hashlib, json
+import sqlite3, os, hashlib
 from datetime import datetime
+from werkzeug.utils import secure_filename
+from PIL import Image
 
 app = Flask(__name__)
-app.secret_key = "silverheart_secret_2024"
-DB = "silverheart.db"
+app.secret_key = os.environ.get("SECRET_KEY", "silverheart_secret_2024")
 
-# ── DB Setup ──────────────────────────────────────────────────────────────────
+# Upload config
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "static", "uploads")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+MAX_SIZE = (400, 400)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# DB path
+if os.environ.get("RENDER") or os.environ.get("RAILWAY_ENVIRONMENT"):
+    DB = "/tmp/silverheart.db"
+else:
+    DB = os.path.join(os.path.dirname(__file__), "silverheart.db")
 
 def get_db():
     conn = sqlite3.connect(DB)
@@ -30,6 +42,7 @@ def init_db():
             looking_for TEXT,
             avatar_color TEXT DEFAULT '#C8956C',
             avatar_letter TEXT DEFAULT 'S',
+            photo TEXT DEFAULT NULL,
             joined TEXT DEFAULT CURRENT_TIMESTAMP
         );
         CREATE TABLE IF NOT EXISTS likes (
@@ -48,9 +61,32 @@ def init_db():
             read INTEGER DEFAULT 0
         );
         """)
+        try:
+            db.execute("ALTER TABLE users ADD COLUMN photo TEXT DEFAULT NULL")
+        except Exception:
+            pass
 
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_photo(file, user_id):
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    filename = f"user_{user_id}.{ext}"
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    img = Image.open(file)
+    img = img.convert("RGB")
+    img.thumbnail(MAX_SIZE, Image.LANCZOS)
+    w, h = img.size
+    min_side = min(w, h)
+    left = (w - min_side) // 2
+    top = (h - min_side) // 2
+    img = img.crop((left, top, left + min_side, top + min_side))
+    img = img.resize((400, 400), Image.LANCZOS)
+    img.save(filepath, quality=85)
+    return filename
 
 def seed_demo_users():
     with get_db() as db:
@@ -62,7 +98,7 @@ def seed_demo_users():
              "Delhi", "Retired teacher who loves gardening and classical music. Looking for someone to share morning walks and evening chai.",
              "Gardening,Music,Reading,Yoga", "Male", "#7B9E87", "M"),
             ("Rajesh K.", "rajesh@demo.com", hash_pw("demo"), 58, "Male", "Divorced",
-             "Mumbai", "Retired engineer. Love cooking, cricket, and long drives. My kids are grown up and I'm ready to find companionship again.",
+             "Mumbai", "Retired engineer. Love cooking, cricket, and long drives. My kids are grown up and I am ready to find companionship again.",
              "Cooking,Cricket,Travel,Movies", "Female", "#6B8CAE", "R"),
             ("Sunita P.", "sunita@demo.com", hash_pw("demo"), 51, "Female", "Divorced",
              "Pune", "Art teacher and weekend painter. I believe life begins again at 50. Looking for someone genuine and kind.",
@@ -82,8 +118,6 @@ def seed_demo_users():
                 (name,email,password,age,gender,status,location,bio,interests,looking_for,avatar_color,avatar_letter)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", d)
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
-
 def current_user():
     if "user_id" in session:
         with get_db() as db:
@@ -91,7 +125,6 @@ def current_user():
     return None
 
 def get_matches(user_id):
-    """People who mutually liked each other."""
     with get_db() as db:
         return db.execute("""
             SELECT u.* FROM users u
@@ -103,7 +136,12 @@ def unread_count(user_id):
     with get_db() as db:
         return db.execute("SELECT COUNT(*) FROM messages WHERE receiver_id=? AND read=0", (user_id,)).fetchone()[0]
 
-# ── Routes ────────────────────────────────────────────────────────────────────
+def photo_url(user):
+    if user["photo"]:
+        return url_for("static", filename=f"uploads/{user['photo']}")
+    return None
+
+app.jinja_env.globals["photo_url"] = photo_url
 
 @app.route("/")
 def index():
@@ -125,16 +163,13 @@ def register():
         bio = f.get("bio","").strip()
         interests = f.get("interests","")
         looking_for = f.get("looking_for","")
-
         if age < 45:
             flash("SilverHeart is for people aged 45 and above.", "error")
             return redirect(url_for("register"))
-
-        colors = ["#C8956C","#7B9E87","#6B8CAE","#C4768E","#9B7EBD","#8B7355","#5B8FA8"]
         import random
+        colors = ["#C8956C","#7B9E87","#6B8CAE","#C4768E","#9B7EBD","#8B7355","#5B8FA8"]
         color = random.choice(colors)
         letter = name[0].upper() if name else "S"
-
         try:
             with get_db() as db:
                 db.execute("""INSERT INTO users
@@ -143,11 +178,15 @@ def register():
                     (name, email, hash_pw(pw), age, gender, status, location, bio, interests, looking_for, color, letter))
                 user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
                 session["user_id"] = user["id"]
+                if "photo" in request.files:
+                    file = request.files["photo"]
+                    if file and file.filename and allowed_file(file.filename):
+                        filename = save_photo(file, user["id"])
+                        db.execute("UPDATE users SET photo=? WHERE id=?", (filename, user["id"]))
             return redirect(url_for("discover"))
         except sqlite3.IntegrityError:
             flash("Email already registered. Please login.", "error")
             return redirect(url_for("login"))
-
     return render_template("register.html")
 
 @app.route("/login", methods=["GET","POST"])
@@ -175,14 +214,10 @@ def discover():
     if not u:
         return redirect(url_for("login"))
     with get_db() as db:
-        # Exclude self and already-liked
         liked_ids = [r["liked_id"] for r in db.execute("SELECT liked_id FROM likes WHERE liker_id=?", (u["id"],)).fetchall()]
         exclude = liked_ids + [u["id"]]
         placeholders = ",".join("?" * len(exclude))
-        profiles = db.execute(f"""
-            SELECT * FROM users WHERE id NOT IN ({placeholders})
-            ORDER BY RANDOM() LIMIT 10
-        """, exclude).fetchall()
+        profiles = db.execute(f"SELECT * FROM users WHERE id NOT IN ({placeholders}) ORDER BY RANDOM() LIMIT 10", exclude).fetchall()
     unread = unread_count(u["id"])
     matches = get_matches(u["id"])
     return render_template("discover.html", user=u, profiles=profiles, unread=unread, match_count=len(matches))
@@ -197,14 +232,12 @@ def like(target_id):
             db.execute("INSERT INTO likes (liker_id, liked_id) VALUES (?,?)", (u["id"], target_id))
         except sqlite3.IntegrityError:
             pass
-        # Check mutual
         mutual = db.execute("SELECT id FROM likes WHERE liker_id=? AND liked_id=?", (target_id, u["id"])).fetchone()
         matched = mutual is not None
     return jsonify({"matched": matched})
 
 @app.route("/pass/<int:target_id>", methods=["POST"])
 def pass_profile(target_id):
-    # Just acknowledge (no DB action needed for pass in basic version)
     return jsonify({"ok": True})
 
 @app.route("/matches")
@@ -223,11 +256,9 @@ def chat(other_id):
         return redirect(url_for("login"))
     with get_db() as db:
         other = db.execute("SELECT * FROM users WHERE id=?", (other_id,)).fetchone()
-        msgs = db.execute("""
-            SELECT * FROM messages
+        msgs = db.execute("""SELECT * FROM messages
             WHERE (sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?)
-            ORDER BY sent_at ASC
-        """, (u["id"], other_id, other_id, u["id"])).fetchall()
+            ORDER BY sent_at ASC""", (u["id"], other_id, other_id, u["id"])).fetchall()
         db.execute("UPDATE messages SET read=1 WHERE receiver_id=? AND sender_id=?", (u["id"], other_id))
     unread = unread_count(u["id"])
     match_count = len(get_matches(u["id"]))
@@ -263,9 +294,13 @@ def my_profile():
     if request.method == "POST":
         f = request.form
         with get_db() as db:
-            db.execute("""UPDATE users SET bio=?, location=?, interests=?, looking_for=?
-                          WHERE id=?""",
+            db.execute("UPDATE users SET bio=?, location=?, interests=?, looking_for=? WHERE id=?",
                        (f.get("bio",""), f.get("location",""), f.get("interests",""), f.get("looking_for",""), u["id"]))
+            if "photo" in request.files:
+                file = request.files["photo"]
+                if file and file.filename and allowed_file(file.filename):
+                    filename = save_photo(file, u["id"])
+                    db.execute("UPDATE users SET photo=? WHERE id=?", (filename, u["id"]))
         flash("Profile updated!", "success")
         return redirect(url_for("my_profile"))
     unread = unread_count(u["id"])

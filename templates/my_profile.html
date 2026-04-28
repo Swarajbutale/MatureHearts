@@ -30,7 +30,11 @@ textarea { resize:vertical; min-height:100px; }
 
   <!-- Profile Hero (read-only summary) -->
   <div class="profile-hero">
+    {% if photo_url(user) %}
+    <img src="{{ photo_url(user) }}" alt="{{ user.name }}" style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto 1.5rem;display:block;border:5px solid white;box-shadow:0 6px 24px rgba(0,0,0,.12);"/>
+    {% else %}
     <div class="avatar-lg" style="background:{{user.avatar_color}}">{{user.avatar_letter}}</div>
+    {% endif %}
     <h1>{{user.name}}</h1>
     <div class="meta">{{user.age}} years old &nbsp;·&nbsp; {{user.gender}} &nbsp;·&nbsp; 📍 {{user.location}}</div>
     <span class="card-status status-{{user.status.lower()}}">{{user.status}}</span>
@@ -38,7 +42,7 @@ textarea { resize:vertical; min-height:100px; }
   </div>
 
   <!-- Editable fields -->
-  <form method="POST" action="/my_profile">
+  <form method="POST" action="/my_profile" enctype="multipart/form-data">
     <div class="edit-section">
       <h3>✏️ Edit Your Profile</h3>
 
@@ -74,6 +78,11 @@ textarea { resize:vertical; min-height:100px; }
         <input type="hidden" name="interests" id="interests-hidden" value="{{user.interests or ''}}"/>
       </div>
 
+      <div class="field">
+        <label>Update Profile Photo</label>
+        <input type="file" name="photo" accept="image/*" style="padding:.5rem;"/>
+        <p style="font-size:.8rem;color:var(--warm-grey);margin-top:.3rem;">JPG, PNG or WEBP · Max 5MB · Will be cropped to square</p>
+      </div>
       <button type="submit" class="save-btn">Save Changes ♡</button>
     </div>
   </form>
