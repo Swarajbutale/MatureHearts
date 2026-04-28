@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Chat with {{other.name}} — SilverHeart{% endblock %}
+{% block extra_styles %}
+.chat-page { max-width:780px; margin:0 auto; padding:2rem 1.5rem; display:flex; flex-direction:column; height:calc(100vh - 64px); }
+.chat-header { background:white; border-radius:16px; padding:1rem 1.5rem; display:flex; align-items:center; gap:1rem; box-shadow:0 4px 20px rgba(44,24,16,.07); margin-bottom:1rem; flex-shrink:0; }
+.chat-avatar { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:1.3rem; color:white; font-weight:700; }
+.chat-header-info h2 { font-family:'Playfair Display',serif; font-size:1.2rem; }
+.chat-header-info p { font-size:.82rem; color:var(--warm-grey); }
+.back-link { margin-left:auto; color:var(--warm-grey); text-decoration:none; font-size:.85rem; }
+.messages-area { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:.75rem; padding:.5rem 0; }
+.msg { max-width:70%; padding:.75rem 1.1rem; border-radius:16px; font-size:.92rem; line-height:1.6; }
+.msg.mine { background:var(--gold); color:white; align-self:flex-end; border-bottom-right-radius:4px; }
+.msg.theirs { background:white; color:var(--deep); align-self:flex-start; border-bottom-left-radius:4px; box-shadow:0 2px 8px rgba(44,24,16,.07); }
+.msg-time { font-size:.72rem; opacity:.65; margin-top:.25rem; text-align:right; }
+.msg.theirs .msg-time { text-align:left; }
+.chat-input-row { display:flex; gap:.75rem; margin-top:1rem; flex-shrink:0; }
+.chat-input-row input { flex:1; padding:.8rem 1.25rem; border:1.5px solid var(--border); border-radius:99px; font-family:'Lato',sans-serif; font-size:.95rem; color:var(--deep); background:white; outline:none; transition:.2s; }
+.chat-input-row input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,169,110,.12); }
+.send-btn { padding:.8rem 1.5rem; background:var(--gold); color:white; border:none; border-radius:99px; font-size:.9rem; font-weight:700; cursor:pointer; transition:.2s; }
+.send-btn:hover { background:#b8935d; }
+.empty-chat { text-align:center; padding:3rem; color:var(--warm-grey); }
+.empty-chat .icon { font-size:3rem; margin-bottom:.75rem; }
+{% endblock %}
+{% block content %}
+<div class="chat-page">
+  <div class="chat-header">
+    <div class="chat-avatar" style="background:{{other.avatar_color}}">{{other.avatar_letter}}</div>
+    <div class="chat-header-info">
+      <h2>{{other.name}}</h2>
+      <p>{{other.age}} · {{other.location}} · {{other.status}}</p>
+    </div>
+    <a href="/matches" class="back-link">← Back to Matches</a>
+  </div>
+
+  <div class="messages-area" id="messages-area">
+    {% if messages %}
+      {% for msg in messages %}
+      <div>
+        <div class="msg {{ 'mine' if msg.sender_id == user.id else 'theirs' }}">
+          {{msg.body}}
+          <div class="msg-time">{{msg.sent_at[11:16]}}</div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-chat">
+      <div class="icon">👋</div>
+      <p>You matched! Say hello to {{other.name.split(',')[0].split(' ')[0]}} and start your story.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="chat-input-row">
+    <input type="text" id="msg-input" placeholder="Type a message…" autocomplete="off"/>
+    <button class="send-btn" onclick="sendMsg()">Send ♡</button>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const otherId = {{other.id}};
+const myId = {{user.id}};
+const area = document.getElementById('messages-area');
+area.scrollTop = area.scrollHeight;
+
+function sendMsg() {
+  const inp = document.getElementById('msg-input');
+  const body = inp.value.trim();
+  if (!body) return;
+  inp.value = '';
+  fetch('/send_message', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({receiver_id: otherId, body: body})
+  }).then(r => r.json()).then(data => {
+    const now = data.time;
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="msg mine">${escHtml(body)}<div class="msg-time">${now}</div></div>`;
+    area.appendChild(wrap);
+    area.scrollTop = area.scrollHeight;
+  });
+}
+document.getElementById('msg-input').addEventListener('keydown', e => { if(e.key==='Enter') sendMsg(); });
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+{% endblock %}

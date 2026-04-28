@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Discover — SilverHeart{% endblock %}
+{% block extra_styles %}
+.discover-page { max-width:1100px; margin:0 auto; padding:2.5rem 1.5rem; }
+.page-header { margin-bottom:2rem; }
+.page-header h1 { font-family:'Playfair Display',serif; font-size:2rem; }
+.page-header p { color:var(--warm-grey); margin-top:.3rem; }
+.profiles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; }
+.profile-card {
+  background:white; border-radius:20px; overflow:hidden;
+  box-shadow:0 4px 20px rgba(44,24,16,.08); transition:.3s;
+  cursor:pointer; position:relative;
+}
+.profile-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(44,24,16,.14); }
+.card-top { padding:2rem 1.5rem 1rem; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.avatar-circle { width:88px; height:88px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:2.2rem; color:white; font-weight:700; margin-bottom:1rem; border:4px solid white; box-shadow:0 4px 16px rgba(0,0,0,.12); }
+.card-name { font-family:'Playfair Display',serif; font-size:1.3rem; }
+.card-meta { font-size:.85rem; color:var(--warm-grey); margin-top:.3rem; }
+.card-status { display:inline-block; padding:.25rem .8rem; border-radius:99px; font-size:.75rem; font-weight:700; margin-top:.5rem; }
+.status-widowed { background:#f0e8f5; color:#7B5EA7; }
+.status-divorced { background:#fdecea; color:#c0392b; }
+.status-single { background:#eaf5ec; color:#276837; }
+.status-separated { background:#fff3e0; color:#e67e22; }
+.card-bio { padding:.75rem 1.5rem; font-size:.88rem; line-height:1.6; color:var(--warm-grey); border-top:1px solid var(--border); }
+.card-interests { padding:.5rem 1.5rem; display:flex; flex-wrap:wrap; gap:.35rem; }
+.chip { padding:.2rem .7rem; background:var(--cream); border-radius:99px; font-size:.75rem; color:var(--warm-grey); border:1px solid var(--border); }
+.card-actions { padding:1rem 1.5rem; display:flex; gap:.75rem; border-top:1px solid var(--border); }
+.action-btn { flex:1; padding:.6rem; border:none; border-radius:99px; font-size:1.3rem; cursor:pointer; transition:.2s; font-family:'Lato',sans-serif; }
+.action-btn.like { background:#fdeaf0; color:var(--rose); }
+.action-btn.like:hover { background:var(--rose); color:white; transform:scale(1.05); }
+.action-btn.pass { background:var(--cream); color:var(--warm-grey); }
+.action-btn.pass:hover { background:#e0dbd5; }
+.match-toast { position:fixed; top:80px; left:50%; transform:translateX(-50%) translateY(-20px); background:white; border-radius:16px; padding:1rem 2rem; box-shadow:0 8px 40px rgba(44,24,16,.18); display:flex; align-items:center; gap:.75rem; font-family:'Playfair Display',serif; font-size:1.1rem; z-index:999; opacity:0; transition:.4s; border:2px solid var(--gold); }
+.match-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.empty-state { text-align:center; padding:5rem 2rem; }
+.empty-state .icon { font-size:4rem; margin-bottom:1rem; }
+.empty-state h2 { font-family:'Playfair Display',serif; font-size:1.8rem; margin-bottom:.75rem; }
+.empty-state p { color:var(--warm-grey); }
+{% endblock %}
+{% block content %}
+<div class="discover-page">
+  <div class="page-header">
+    <h1>Discover People ✨</h1>
+    <p>Take your time — there's no rush on SilverHeart</p>
+  </div>
+
+  {% if profiles %}
+  <div class="profiles-grid" id="profiles-grid">
+    {% for p in profiles %}
+    <div class="profile-card" id="card-{{p.id}}">
+      <a href="/profile/{{p.id}}" style="text-decoration:none;color:inherit;">
+        <div class="card-top">
+          <div class="avatar-circle" style="background:{{p.avatar_color}}">{{p.avatar_letter}}</div>
+          <div class="card-name">{{p.name}}, {{p.age}}</div>
+          <div class="card-meta">📍 {{p.location}}</div>
+          <span class="card-status status-{{p.status.lower()}}">{{p.status}}</span>
+        </div>
+        {% if p.bio %}
+        <div class="card-bio">{{p.bio[:110]}}{% if p.bio|length > 110 %}...{% endif %}</div>
+        {% endif %}
+        {% if p.interests %}
+        <div class="card-interests">
+          {% for chip in p.interests.split(',')[:3] %}
+          <span class="chip">{{chip.strip()}}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </a>
+      <div class="card-actions">
+        <button class="action-btn pass" onclick="passProfile({{p.id}})">✕ Pass</button>
+        <button class="action-btn like" onclick="likeProfile({{p.id}}, '{{p.name}}')">♡ Like</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">🌸</div>
+    <h2>You've seen everyone for now</h2>
+    <p>Check back soon — new members join every day.<br/>Meanwhile, check your <a href="/matches" style="color:var(--gold);font-weight:700;">matches</a>!</p>
+  </div>
+  {% endif %}
+</div>
+
+<div class="match-toast" id="match-toast">
+  <span>🎉</span>
+  <div>It's a match with <strong id="match-name"></strong>!</div>
+  <a href="/matches" style="color:var(--gold);font-weight:700;font-size:.85rem;white-space:nowrap;">View →</a>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function likeProfile(id, name) {
+  fetch(`/like/${id}`, {method:'POST'})
+    .then(r => r.json()).then(data => {
+      removeCard(id);
+      if (data.matched) showMatch(name);
+    });
+}
+function passProfile(id) {
+  fetch(`/pass/${id}`, {method:'POST'}).then(() => removeCard(id));
+}
+function removeCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (card) { card.style.transition='.3s'; card.style.opacity='0'; card.style.transform='scale(.9)'; setTimeout(()=>card.remove(),300); }
+}
+function showMatch(name) {
+  const toast = document.getElementById('match-toast');
+  document.getElementById('match-name').textContent = name.split(',')[0].split(' ')[0];
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}My Profile — SilverHeart{% endblock %}
+{% block extra_styles %}
+.profile-page { max-width:680px; margin:0 auto; padding:2.5rem 1.5rem; }
+.profile-hero { background:white; border-radius:24px; padding:3rem 2.5rem; text-align:center; box-shadow:0 8px 32px rgba(44,24,16,.09); margin-bottom:1.5rem; }
+.avatar-lg { width:120px; height:120px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:3rem; color:white; font-weight:700; margin:0 auto 1.5rem; border:5px solid white; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+.profile-hero h1 { font-family:'Playfair Display',serif; font-size:2rem; margin-bottom:.4rem; }
+.profile-hero .meta { color:var(--warm-grey); font-size:.92rem; margin-bottom:1rem; }
+.card-status { display:inline-block; padding:.3rem 1rem; border-radius:99px; font-size:.8rem; font-weight:700; }
+.status-widowed { background:#f0e8f5; color:#7B5EA7; }
+.status-divorced { background:#fdecea; color:#c0392b; }
+.status-single { background:#eaf5ec; color:#276837; }
+.status-separated { background:#fff3e0; color:#e67e22; }
+.edit-section { background:white; border-radius:18px; padding:1.75rem; box-shadow:0 4px 20px rgba(44,24,16,.07); margin-bottom:1rem; }
+.edit-section h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); margin-bottom:1rem; }
+.field { margin-bottom:1.2rem; }
+label { display:block; font-size:.83rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--warm-grey); margin-bottom:.4rem; }
+input, select, textarea { width:100%; padding:.7rem 1rem; border:1.5px solid var(--border); border-radius:10px; font-family:'Lato',sans-serif; font-size:.95rem; color:var(--deep); background:var(--cream); transition:.2s; outline:none; }
+input:focus, select:focus, textarea:focus { border-color:var(--gold); background:white; box-shadow:0 0 0 3px rgba(201,169,110,.12); }
+textarea { resize:vertical; min-height:100px; }
+.interests-grid { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.4rem; }
+.interest-chip { padding:.35rem .9rem; border-radius:99px; border:1.5px solid var(--border); font-size:.82rem; cursor:pointer; transition:.2s; background:var(--cream); color:var(--deep); }
+.interest-chip.selected { background:var(--gold); border-color:var(--gold); color:white; }
+.save-btn { width:100%; padding:.9rem; background:var(--gold); color:white; border:none; border-radius:99px; font-size:1rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; transition:.2s; }
+.save-btn:hover { background:#b8935d; transform:translateY(-1px); box-shadow:0 6px 24px rgba(201,169,110,.4); }
+.joined-badge { font-size:.82rem; color:var(--warm-grey); margin-top:.75rem; }
+{% endblock %}
+{% block content %}
+<div class="profile-page">
+
+  <!-- Profile Hero (read-only summary) -->
+  <div class="profile-hero">
+    <div class="avatar-lg" style="background:{{user.avatar_color}}">{{user.avatar_letter}}</div>
+    <h1>{{user.name}}</h1>
+    <div class="meta">{{user.age}} years old &nbsp;·&nbsp; {{user.gender}} &nbsp;·&nbsp; 📍 {{user.location}}</div>
+    <span class="card-status status-{{user.status.lower()}}">{{user.status}}</span>
+    <div class="joined-badge">Member since {{user.joined[:10]}}</div>
+  </div>
+
+  <!-- Editable fields -->
+  <form method="POST" action="/my_profile">
+    <div class="edit-section">
+      <h3>✏️ Edit Your Profile</h3>
+
+      <div class="field">
+        <label>Your City / Location</label>
+        <input type="text" name="location" value="{{user.location or ''}}" placeholder="e.g. Pune"/>
+      </div>
+
+      <div class="field">
+        <label>Looking For</label>
+        <select name="looking_for">
+          <option value="">Anyone</option>
+          {% for opt in ["Male","Female","Non-binary"] %}
+          <option value="{{opt}}" {{"selected" if user.looking_for == opt else ""}}>{{opt}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>About You</label>
+        <textarea name="bio" placeholder="Tell people about yourself, your life, and what you enjoy...">{{user.bio or ''}}</textarea>
+      </div>
+
+      <div class="field">
+        <label>Interests</label>
+        <div class="interests-grid" id="interests-grid">
+          {% set current = (user.interests or '').split(',') %}
+          {% for interest in ["Travel","Reading","Music","Cooking","Yoga","Gardening","Movies","Cricket","Dancing","Photography","Fitness","Art","Chess","Nature","Spirituality","Volunteering","Family","Grandchildren"] %}
+          <div class="interest-chip {% if interest.strip() in current %}selected{% endif %}"
+               onclick="toggleInterest(this, '{{interest}}')">{{interest}}</div>
+          {% endfor %}
+        </div>
+        <input type="hidden" name="interests" id="interests-hidden" value="{{user.interests or ''}}"/>
+      </div>
+
+      <button type="submit" class="save-btn">Save Changes ♡</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+// Pre-populate selected interests from hidden field
+let selected = document.getElementById('interests-hidden').value
+  .split(',').map(s => s.trim()).filter(Boolean);
+
+function toggleInterest(el, val) {
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    selected = selected.filter(v => v !== val);
+  } else {
+    el.classList.add('selected');
+    selected.push(val);
+  }
+  document.getElementById('interests-hidden').value = selected.join(',');
+}
+</script>
+{% endblock %}

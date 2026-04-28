@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SilverHeart — Love After 45</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #C9A96E; --gold-light: #E8D5AA; --rose: #C4768E;
+  --deep: #2C1810; --cream: #FBF6EE; --warm-grey: #8B7D72;
+}
+body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--deep); overflow-x:hidden; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(201,169,110,.12) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero-left {
+  display:flex; flex-direction:column; justify-content:center;
+  padding: 5rem 4rem 5rem 6rem;
+  position:relative;
+}
+.hero-right {
+  display:flex; align-items:center; justify-content:center;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(201,169,110,.08) 0%, rgba(196,118,142,.08) 100%);
+  position:relative;
+  overflow:hidden;
+}
+.hero-right::before {
+  content:'♡';
+  position:absolute;
+  font-size:40rem;
+  opacity:.04;
+  color: var(--gold);
+  right:-8rem; top:-4rem;
+  line-height:1;
+}
+.tag { display:inline-block; background: var(--gold-light); color: var(--deep); padding:.3rem 1rem; border-radius:99px; font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:1.5rem; }
+h1 { font-family:'Playfair Display', serif; font-size:3.8rem; line-height:1.1; margin-bottom:1.5rem; }
+h1 em { color: var(--gold); font-style:italic; }
+.hero-sub { font-size:1.1rem; line-height:1.7; color: var(--warm-grey); max-width:480px; margin-bottom:2.5rem; }
+.hero-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+.btn { display:inline-block; padding:.75rem 2rem; border-radius:99px; font-family:'Lato',sans-serif; font-size:.9rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; border:none; transition:.2s; text-decoration:none; }
+.btn-gold { background:var(--gold); color:white; }
+.btn-gold:hover { background:#b8935d; transform:translateY(-2px); box-shadow:0 6px 24px rgba(201,169,110,.4); }
+.btn-outline { background:transparent; border:2px solid var(--deep); color:var(--deep); }
+.btn-outline:hover { background:var(--deep); color:white; }
+
+/* Floating cards */
+.float-cards { display:grid; gap:1.2rem; width:100%; max-width:340px; }
+.profile-card {
+  background:white; border-radius:20px; padding:1.5rem;
+  box-shadow: 0 8px 32px rgba(44,24,16,.12);
+  display:flex; align-items:center; gap:1.2rem;
+  animation: floatUp 6s ease-in-out infinite;
+}
+.profile-card:nth-child(2) { animation-delay: -2s; margin-left: 2rem; }
+.profile-card:nth-child(3) { animation-delay: -4s; }
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.card-avatar { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:white; font-family:'Playfair Display',serif; font-weight:700; flex-shrink:0; }
+.card-info h3 { font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:.2rem; }
+.card-info p { font-size:.82rem; color:var(--warm-grey); }
+.card-heart { margin-left:auto; font-size:1.4rem; color:var(--rose); }
+
+/* STATS */
+.stats { display:flex; gap:3rem; margin-top:3rem; }
+.stat { text-align:center; }
+.stat-num { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); font-weight:700; }
+.stat-label { font-size:.8rem; color:var(--warm-grey); text-transform:uppercase; letter-spacing:.06em; margin-top:.2rem; }
+
+/* HOW IT WORKS */
+.section { padding:5rem 6rem; }
+.section-tag { color:var(--gold); font-size:.85rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.75rem; }
+.section h2 { font-family:'Playfair Display',serif; font-size:2.5rem; margin-bottom:3rem; }
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+.step { background:white; border-radius:20px; padding:2rem; box-shadow:0 4px 24px rgba(44,24,16,.07); position:relative; }
+.step-num { width:44px; height:44px; background:var(--gold-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--deep); font-weight:700; margin-bottom:1.2rem; }
+.step h3 { font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:.75rem; }
+.step p { font-size:.9rem; line-height:1.7; color:var(--warm-grey); }
+
+/* FOOTER */
+footer { background:var(--deep); color:var(--gold-light); text-align:center; padding:2.5rem; }
+footer .brand { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); margin-bottom:.5rem; }
+footer p { font-size:.85rem; opacity:.6; }
+
+@media(max-width:900px){
+  .hero { grid-template-columns:1fr; }
+  .hero-right { display:none; }
+  .hero-left { padding:4rem 2rem; }
+  h1 { font-size:2.5rem; }
+  .section { padding:3rem 2rem; }
+  .steps { grid-template-columns:1fr; }
+  .stats { gap:1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="tag">♡ For Ages 45 & Above</div>
+    <h1>Love has no<br><em>expiry date.</em></h1>
+    <p class="hero-sub">SilverHeart is a warm, respectful community for widowed, divorced, and single adults over 45 who believe the best chapters are still ahead.</p>
+    <div class="hero-btns">
+      <a href="/register" class="btn btn-gold">Start Your Journey</a>
+      <a href="/login" class="btn btn-outline">Sign In</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Members</div></div>
+      <div class="stat"><div class="stat-num">8K+</div><div class="stat-label">Matches Made</div></div>
+      <div class="stat"><div class="stat-num">45+</div><div class="stat-label">Age Verified</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="float-cards">
+      <div class="profile-card">
+        <div class="card-avatar" style="background:#7B9E87">M</div>
+        <div class="card-info">
+          <h3>Margaret, 62</h3>
+          <p>📍 Delhi &nbsp;·&nbsp; Widowed</p>
+          <p>Gardening · Music · Yoga</p>
+        </div>
+        <div class="card-heart">♡</div>
+      </div>
+      <div class="profile-card">
+        <div class="card-avatar" style="background:#6B8CAE">R</div>
+        <div class="card-info">
+          <h3>Rajesh, 58</h3>
+          <p>📍 Mumbai &nbsp;·&nbsp; Divorced</p>
+          <p>Travel · Cricket · Cooking</p>
+        </div>
+        <div class="card-heart">♥</div>
+      </div>
+      <div class="profile-card">
+        <div class="card-avatar" style="background:#C4768E">S</div>
+        <div class="card-info">
+          <h3>Sunita, 51</h3>
+          <p>📍 Pune &nbsp;·&nbsp; Divorced</p>
+          <p>Art · Travel · Dancing</p>
+        </div>
+        <div class="card-heart">♡</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-tag">Simple & Respectful</div>
+  <h2>How SilverHeart Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Create Your Profile</h3>
+      <p>Share your story, interests, and what you're looking for. Authentic profiles only — no filters or pretense.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Discover & Connect</h3>
+      <p>Browse profiles with care. Express interest with a heart. When it's mutual, you both get notified.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Chat & Meet</h3>
+      <p>Only mutual matches can message each other. Start conversations at your own pace, in your own time.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">♡ SilverHeart</div>
+  <p>A safe, warm space for love after 45 · Made with care in India</p>
+</footer>
+</body>
+</html>

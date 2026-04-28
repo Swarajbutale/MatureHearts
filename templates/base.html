@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block title %}SilverHeart{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #C9A96E;
+  --gold-light: #E8D5AA;
+  --rose: #C4768E;
+  --deep: #2C1810;
+  --cream: #FBF6EE;
+  --warm-grey: #8B7D72;
+  --card-bg: #FFFDF9;
+  --border: #E8DDD2;
+  --success: #7B9E87;
+  --shadow: 0 4px 24px rgba(44,24,16,.10);
+  --shadow-lg: 0 12px 48px rgba(44,24,16,.16);
+}
+body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--deep); min-height: 100vh; }
+
+/* NAV */
+nav {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top:0; z-index:100;
+  box-shadow: 0 2px 12px rgba(44,24,16,.06);
+}
+.nav-brand { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold); text-decoration:none; display:flex; align-items:center; gap:.5rem; }
+.nav-brand span { font-size:1.3rem; }
+.nav-links { display:flex; align-items:center; gap:1.5rem; }
+.nav-links a { text-decoration:none; color: var(--warm-grey); font-size:.9rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; transition:.2s; position:relative; }
+.nav-links a:hover { color: var(--gold); }
+.nav-links a.active { color: var(--gold); }
+.badge { background: var(--rose); color:white; border-radius:99px; padding:2px 7px; font-size:.72rem; margin-left:4px; font-weight:700; }
+.nav-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1rem; color:white; cursor:pointer; }
+
+/* FLASH */
+.flash { padding:.75rem 1.25rem; border-radius:8px; margin:.75rem 0; font-size:.9rem; }
+.flash.error { background:#fdecea; color:#c0392b; border:1px solid #f5c6cb; }
+.flash.success { background:#eaf5ec; color:#276837; border:1px solid #b7dfbf; }
+
+/* BUTTONS */
+.btn { display:inline-block; padding:.65rem 1.6rem; border-radius:99px; font-family:'Lato',sans-serif; font-size:.9rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; border:none; transition:.2s; text-decoration:none; }
+.btn-gold { background: var(--gold); color:white; }
+.btn-gold:hover { background: #b8935d; transform:translateY(-1px); box-shadow:0 4px 16px rgba(201,169,110,.4); }
+.btn-outline { background:transparent; border:2px solid var(--gold); color:var(--gold); }
+.btn-outline:hover { background:var(--gold); color:white; }
+.btn-rose { background: var(--rose); color:white; }
+.btn-rose:hover { background: #b3637e; }
+
+{% block extra_styles %}{% endblock %}
+</style>
+</head>
+<body>
+{% if session.user_id %}
+<nav>
+  <a class="nav-brand" href="{{ url_for('discover') }}"><span>♡</span> SilverHeart</a>
+  <div class="nav-links">
+    <a href="{{ url_for('discover') }}" class="{% if request.endpoint=='discover' %}active{% endif %}">Discover</a>
+    <a href="{{ url_for('matches') }}" class="{% if request.endpoint=='matches' %}active{% endif %}">
+      Matches {% if match_count is defined and match_count %}
+        <span class="badge">{{ match_count }}</span>{% endif %}
+    </a>
+    <a href="{{ url_for('my_profile') }}" class="{% if request.endpoint=='my_profile' %}active{% endif %}">Profile</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
+</nav>
+{% endif %}
+<div id="flash-container" style="max-width:500px;margin:.5rem auto 0;">
+{% for cat, msg in get_flashed_messages(with_categories=True) %}
+  <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+</div>
+{% block content %}{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

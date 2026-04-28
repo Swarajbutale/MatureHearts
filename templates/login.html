@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Sign In — SilverHeart{% endblock %}
+{% block extra_styles %}
+.auth-page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:3rem 1rem; }
+.auth-card { background:white; border-radius:24px; padding:2.5rem; width:100%; max-width:420px; box-shadow:0 12px 48px rgba(44,24,16,.12); }
+.auth-brand { text-align:center; margin-bottom:2rem; }
+.auth-brand a { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--gold); text-decoration:none; }
+.auth-brand p { color:var(--warm-grey); font-size:.9rem; margin-top:.3rem; }
+h2 { font-family:'Playfair Display',serif; font-size:1.6rem; margin-bottom:1.5rem; text-align:center; }
+.field { margin-bottom:1.2rem; }
+label { display:block; font-size:.83rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--warm-grey); margin-bottom:.4rem; }
+input { width:100%; padding:.7rem 1rem; border:1.5px solid var(--border); border-radius:10px; font-family:'Lato',sans-serif; font-size:.95rem; color:var(--deep); background:var(--cream); transition:.2s; outline:none; }
+input:focus { border-color:var(--gold); background:white; box-shadow:0 0 0 3px rgba(201,169,110,.12); }
+.submit-btn { width:100%; padding:.9rem; background:var(--gold); color:white; border:none; border-radius:99px; font-size:1rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; transition:.2s; margin-top:.5rem; }
+.submit-btn:hover { background:#b8935d; transform:translateY(-1px); }
+.auth-footer { text-align:center; margin-top:1.2rem; font-size:.9rem; color:var(--warm-grey); }
+.auth-footer a { color:var(--gold); font-weight:700; text-decoration:none; }
+.demo-box { background:var(--cream); border-radius:12px; padding:1rem; margin-top:1.2rem; font-size:.85rem; color:var(--warm-grey); border:1px solid var(--border); }
+.demo-box strong { color:var(--deep); }
+{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <a href="/">♡ SilverHeart</a>
+      <p>Welcome back</p>
+    </div>
+    <h2>Sign In</h2>
+    <form method="POST" action="/login">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="you@email.com"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Your password"/>
+      </div>
+      <button type="submit" class="submit-btn">Sign In</button>
+    </form>
+    <div class="auth-footer">New to SilverHeart? <a href="/register">Create account</a></div>
+    <div class="demo-box">
+      <strong>Try a demo account:</strong><br/>
+      Email: <code>margaret@demo.com</code> &nbsp;|&nbsp; Password: <code>demo</code>
+    </div>
+  </div>
+</div>
+{% endblock %}

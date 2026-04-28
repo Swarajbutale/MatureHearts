@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MatureHearts — Love After 45</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- LANDING PAGE -->
+  <div id="page-landing" class="page active">
+    <div class="landing-bg">
+      <div class="grain"></div>
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+    </div>
+    <nav class="nav">
+      <div class="logo">MatureHearts</div>
+      <div class="nav-links">
+        <a href="#" onclick="showPage('page-login')">Sign In</a>
+        <button class="btn-primary" onclick="showPage('page-signup')">Join Free</button>
+      </div>
+    </nav>
+    <section class="hero">
+      <div class="hero-text">
+        <span class="eyebrow">For those who've lived, loved & grown</span>
+        <h1>A second chance<br/><em>at forever</em></h1>
+        <p class="hero-sub">A warm, respectful space for singles 45+, widowed, or divorced — to find genuine connection and companionship.</p>
+        <div class="hero-cta">
+          <button class="btn-primary large" onclick="showPage('page-signup')">Start Your Journey</button>
+          <button class="btn-ghost" onclick="showPage('page-browse')">Browse Profiles</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>12,000+</strong><span>Members</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><strong>3,400+</strong><span>Matches Made</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><strong>850+</strong><span>Success Stories</span></div>
+        </div>
+      </div>
+      <div class="hero-card-stack">
+        <div class="profile-card card-back">
+          <img src="https://randomuser.me/api/portraits/women/68.jpg" alt=""/>
+          <div class="card-info"><strong>Priya, 52</strong><span>Mumbai</span></div>
+        </div>
+        <div class="profile-card card-mid">
+          <img src="https://randomuser.me/api/portraits/men/54.jpg" alt=""/>
+          <div class="card-info"><strong>Rajesh, 57</strong><span>Pune</span></div>
+        </div>
+        <div class="profile-card card-front">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""/>
+          <div class="card-info"><strong>Sunita, 48</strong><span>Delhi</span></div>
+          <div class="card-badge">❤ New Match</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>Designed for <em>your chapter</em></h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Verified Profiles</h3>
+          <p>Every member is manually verified. No fake profiles, no games — only real people.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Thoughtful Matching</h3>
+          <p>Answer a few questions about your values and lifestyle. We'll surface people who truly resonate.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌸</div>
+          <h3>Safe & Respectful</h3>
+          <p>A moderated community where kindness isn't optional — it's the culture.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy First</h3>
+          <p>Control who sees your profile, photos, and contact info — always on your terms.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <h2>Real stories, <em>real love</em></h2>
+      <div class="testimonials-grid">
+        <div class="testimonial">
+          <p>"After losing my husband, I never thought I'd smile like this again. MatureHearts gave me the courage."</p>
+          <div class="testimonial-author"><img src="https://randomuser.me/api/portraits/women/60.jpg"/><span>Meena R., 61 — Bangalore</span></div>
+        </div>
+        <div class="testimonial">
+          <p>"At 54, I was skeptical. But the quality of conversations here is unlike anything I'd experienced."</p>
+          <div class="testimonial-author"><img src="https://randomuser.me/api/portraits/men/62.jpg"/><span>Vikram S., 54 — Chennai</span></div>
+        </div>
+        <div class="testimonial">
+          <p>"We met here six months ago. We're getting married in March. Life surprises you."</p>
+          <div class="testimonial-author"><img src="https://randomuser.me/api/portraits/women/55.jpg"/><span>Anita & Suresh, Hyderabad</span></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="logo">MatureHearts</div>
+      <p>Love knows no age. © 2026 MatureHearts. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Safety</a><a href="#">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- SIGNUP PAGE -->
+  <div id="page-signup" class="page">
+    <div class="auth-wrap">
+      <div class="auth-art">
+        <div class="grain"></div>
+        <div class="orb orb1"></div>
+        <div class="orb orb3"></div>
+        <div class="auth-art-text">
+          <h2>Every story<br/>deserves<br/><em>a next page</em></h2>
+          <p>Join 12,000+ singles finding warmth and connection.</p>
+        </div>
+      </div>
+      <div class="auth-form-wrap">
+        <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
+        <h2>Create your profile</h2>
+        <p class="auth-sub">Free to join. Always respectful.</p>
+        <div class="form-step" id="step1">
+          <label>Full Name</label>
+          <input type="text" id="su-name" placeholder="Your name"/>
+          <label>Email</label>
+          <input type="email" id="su-email" placeholder="your@email.com"/>
+          <label>Password</label>
+          <input type="password" id="su-pass" placeholder="••••••••"/>
+          <label>Age</label>
+          <input type="number" id="su-age" placeholder="Must be 45+" min="45"/>
+          <label>Gender</label>
+          <select id="su-gender">
+            <option value="">Select gender</option>
+            <option>Man</option><option>Woman</option><option>Non-binary</option><option>Other</option>
+          </select>
+          <label>Status</label>
+          <select id="su-status">
+            <option value="">Relationship status</option>
+            <option>Single</option><option>Divorced</option><option>Widowed</option><option>Separated</option>
+          </select>
+          <label>Location (City)</label>
+          <input type="text" id="su-city" placeholder="e.g. Pune, Mumbai..."/>
+          <button class="btn-primary full" onclick="nextStep()">Continue →</button>
+        </div>
+        <div class="form-step hidden" id="step2">
+          <label>About You <small>(a few sentences)</small></label>
+          <textarea id="su-bio" placeholder="Share a little about who you are, your interests, and what you're looking for..."></textarea>
+          <label>Interests (pick up to 5)</label>
+          <div class="tag-select" id="interests-tags">
+            <span class="tag" onclick="toggleTag(this)">Travel</span>
+            <span class="tag" onclick="toggleTag(this)">Reading</span>
+            <span class="tag" onclick="toggleTag(this)">Cooking</span>
+            <span class="tag" onclick="toggleTag(this)">Music</span>
+            <span class="tag" onclick="toggleTag(this)">Yoga</span>
+            <span class="tag" onclick="toggleTag(this)">Gardening</span>
+            <span class="tag" onclick="toggleTag(this)">Movies</span>
+            <span class="tag" onclick="toggleTag(this)">Walking</span>
+            <span class="tag" onclick="toggleTag(this)">Spirituality</span>
+            <span class="tag" onclick="toggleTag(this)">Photography</span>
+            <span class="tag" onclick="toggleTag(this)">Volunteering</span>
+            <span class="tag" onclick="toggleTag(this)">Grandchildren</span>
+          </div>
+          <label>Looking for</label>
+          <select id="su-looking">
+            <option>Companionship</option>
+            <option>Long-term relationship</option>
+            <option>Friendship first</option>
+            <option>Marriage</option>
+            <option>Not sure yet</option>
+          </select>
+          <button class="btn-primary full" onclick="completeSignup()">Create My Profile ❤</button>
+        </div>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('page-login')">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN PAGE -->
+  <div id="page-login" class="page">
+    <div class="auth-wrap">
+      <div class="auth-art">
+        <div class="grain"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+        <div class="auth-art-text">
+          <h2>Welcome<br/>back,<br/><em>dear heart</em></h2>
+        </div>
+      </div>
+      <div class="auth-form-wrap">
+        <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
+        <h2>Sign in</h2>
+        <p class="auth-sub">Good to see you again.</p>
+        <label>Email</label>
+        <input type="email" id="li-email" placeholder="your@email.com"/>
+        <label>Password</label>
+        <input type="password" id="li-pass" placeholder="••••••••"/>
+        <button class="btn-primary full" onclick="doLogin()">Sign In</button>
+        <p class="auth-switch">New here? <a href="#" onclick="showPage('page-signup')">Create a free account</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROWSE / SWIPE PAGE -->
+  <div id="page-browse" class="page">
+    <nav class="app-nav">
+      <div class="logo small">MatureHearts</div>
+      <div class="app-nav-links">
+        <button class="nav-icon active" onclick="showPage('page-browse')" title="Discover">🔍</button>
+        <button class="nav-icon" onclick="showPage('page-matches')" title="Matches">❤</button>
+        <button class="nav-icon" onclick="showPage('page-messages')" title="Messages">💬</button>
+        <button class="nav-icon" onclick="showPage('page-profile')" title="Profile">👤</button>
+      </div>
+    </nav>
+    <div class="browse-wrap">
+      <div class="browse-header">
+        <h2>Discover</h2>
+        <button class="filter-btn" onclick="toggleFilters()">⚙ Filters</button>
+      </div>
+      <div class="filter-panel hidden" id="filter-panel">
+        <label>Age Range: <span id="age-label">45–75</span></label>
+        <input type="range" id="age-range" min="45" max="80" value="75" oninput="document.getElementById('age-label').textContent='45–'+this.value"/>
+        <label>Distance (km): <span id="dist-label">50</span></label>
+        <input type="range" id="dist-range" min="5" max="500" value="50" oninput="document.getElementById('dist-label').textContent=this.value"/>
+        <label>Looking for</label>
+        <div class="tag-select">
+          <span class="tag selected" onclick="toggleTag(this)">Any</span>
+          <span class="tag" onclick="toggleTag(this)">Companionship</span>
+          <span class="tag" onclick="toggleTag(this)">Relationship</span>
+          <span class="tag" onclick="toggleTag(this)">Marriage</span>
+        </div>
+      </div>
+
+      <div class="swipe-area" id="swipe-area">
+        <!-- Cards injected by JS -->
+      </div>
+
+      <div class="swipe-actions">
+        <button class="action-btn skip" onclick="swipeCard('left')" title="Pass">✕</button>
+        <button class="action-btn superlike" onclick="swipeCard('super')" title="Super Like">⭐</button>
+        <button class="action-btn like" onclick="swipeCard('right')" title="Like">❤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MATCHES PAGE -->
+  <div id="page-matches" class="page">
+    <nav class="app-nav">
+      <div class="logo small">MatureHearts</div>
+      <div class="app-nav-links">
+        <button class="nav-icon" onclick="showPage('page-browse')" title="Discover">🔍</button>
+        <button class="nav-icon active" onclick="showPage('page-matches')" title="Matches">❤</button>
+        <button class="nav-icon" onclick="showPage('page-messages')" title="Messages">💬</button>
+        <button class="nav-icon" onclick="showPage('page-profile')" title="Profile">👤</button>
+      </div>
+    </nav>
+    <div class="matches-wrap">
+      <h2>Your Matches</h2>
+      <p class="section-sub">People who liked you back ❤</p>
+      <div class="matches-grid" id="matches-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGES PAGE -->
+  <div id="page-messages" class="page">
+    <nav class="app-nav">
+      <div class="logo small">MatureHearts</div>
+      <div class="app-nav-links">
+        <button class="nav-icon" onclick="showPage('page-browse')" title="Discover">🔍</button>
+        <button class="nav-icon" onclick="showPage('page-matches')" title="Matches">❤</button>
+        <button class="nav-icon active" onclick="showPage('page-messages')" title="Messages">💬</button>
+        <button class="nav-icon" onclick="showPage('page-profile')" title="Profile">👤</button>
+      </div>
+    </nav>
+    <div class="messages-wrap">
+      <div class="conversations-list" id="conversations-list"></div>
+      <div class="chat-area" id="chat-area">
+        <div class="chat-empty">Select a conversation to start chatting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div id="page-profile" class="page">
+    <nav class="app-nav">
+      <div class="logo small">MatureHearts</div>
+      <div class="app-nav-links">
+        <button class="nav-icon" onclick="showPage('page-browse')" title="Discover">🔍</button>
+        <button class="nav-icon" onclick="showPage('page-matches')" title="Matches">❤</button>
+        <button class="nav-icon" onclick="showPage('page-messages')" title="Messages">💬</button>
+        <button class="nav-icon active" onclick="showPage('page-profile')" title="Profile">👤</button>
+      </div>
+    </nav>
+    <div class="profile-wrap" id="my-profile-wrap">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- MATCH ANIMATION OVERLAY -->
+  <div class="match-overlay hidden" id="match-overlay">
+    <div class="match-box">
+      <div class="match-hearts">❤ It's a Match! ❤</div>
+      <div class="match-avatars">
+        <img id="match-img-me" src="https://randomuser.me/api/portraits/lego/1.jpg"/>
+        <img id="match-img-them" src=""/>
+      </div>
+      <p id="match-name-text"></p>
+      <button class="btn-primary" onclick="openChat()">Send a Message</button>
+      <button class="btn-ghost" onclick="closeMatch()">Keep Browsing</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

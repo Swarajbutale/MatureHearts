@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{person.name}} — SilverHeart{% endblock %}
+{% block extra_styles %}
+.profile-page { max-width:680px; margin:0 auto; padding:2.5rem 1.5rem; }
+.back-link { color:var(--warm-grey); text-decoration:none; font-size:.85rem; display:inline-block; margin-bottom:1.5rem; }
+.back-link:hover { color:var(--gold); }
+.profile-hero { background:white; border-radius:24px; padding:3rem 2.5rem; text-align:center; box-shadow:0 8px 32px rgba(44,24,16,.09); margin-bottom:1.5rem; }
+.avatar-lg { width:120px; height:120px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:3rem; color:white; font-weight:700; margin:0 auto 1.5rem; border:5px solid white; box-shadow:0 6px 24px rgba(0,0,0,.12); }
+.profile-hero h1 { font-family:'Playfair Display',serif; font-size:2rem; margin-bottom:.4rem; }
+.profile-hero .meta { color:var(--warm-grey); font-size:.92rem; margin-bottom:1rem; }
+.card-status { display:inline-block; padding:.3rem 1rem; border-radius:99px; font-size:.8rem; font-weight:700; }
+.status-widowed { background:#f0e8f5; color:#7B5EA7; }
+.status-divorced { background:#fdecea; color:#c0392b; }
+.status-single { background:#eaf5ec; color:#276837; }
+.status-separated { background:#fff3e0; color:#e67e22; }
+.profile-section { background:white; border-radius:18px; padding:1.75rem; box-shadow:0 4px 20px rgba(44,24,16,.07); margin-bottom:1rem; }
+.profile-section h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); margin-bottom:.75rem; }
+.profile-section p { font-size:.92rem; line-height:1.7; color:var(--warm-grey); }
+.interests-row { display:flex; flex-wrap:wrap; gap:.5rem; }
+.chip { padding:.3rem .9rem; background:var(--cream); border-radius:99px; font-size:.82rem; color:var(--deep); border:1px solid var(--border); }
+.action-row { display:flex; gap:1rem; margin-top:1.5rem; }
+{% endblock %}
+{% block content %}
+<div class="profile-page">
+  <a href="javascript:history.back()" class="back-link">← Back</a>
+  <div class="profile-hero">
+    <div class="avatar-lg" style="background:{{person.avatar_color}}">{{person.avatar_letter}}</div>
+    <h1>{{person.name}}</h1>
+    <div class="meta">{{person.age}} years old &nbsp;·&nbsp; {{person.gender}} &nbsp;·&nbsp; 📍 {{person.location}}</div>
+    <span class="card-status status-{{person.status.lower()}}">{{person.status}}</span>
+    {% if person.looking_for %}
+    <div style="margin-top:.75rem;font-size:.85rem;color:var(--warm-grey);">Looking for: <strong>{{person.looking_for}}</strong></div>
+    {% endif %}
+  </div>
+
+  {% if person.bio %}
+  <div class="profile-section">
+    <h3>About Me</h3>
+    <p>{{person.bio}}</p>
+  </div>
+  {% endif %}
+
+  {% if person.interests %}
+  <div class="profile-section">
+    <h3>Interests</h3>
+    <div class="interests-row">
+      {% for chip in person.interests.split(',') %}
+      <span class="chip">{{chip.strip()}}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if person.id != user.id %}
+  <div class="action-row">
+    <button class="btn btn-gold" style="flex:1;" onclick="likeFromProfile({{person.id}}, '{{person.name}}')">♡ Like {{person.name.split()[0]}}</button>
+    <a href="/discover" class="btn btn-outline" style="flex:1;text-align:center;">← Discover More</a>
+  </div>
+  <div id="liked-notice" style="display:none;text-align:center;margin-top:1rem;color:var(--success);font-weight:700;"></div>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function likeFromProfile(id, name) {
+  fetch(`/like/${id}`, {method:'POST'}).then(r=>r.json()).then(data=>{
+    const notice = document.getElementById('liked-notice');
+    notice.style.display = 'block';
+    if (data.matched) {
+      notice.textContent = `🎉 It's a match! You and ${name.split(',')[0].split(' ')[0]} both liked each other!`;
+    } else {
+      notice.textContent = `♡ You liked ${name.split(',')[0].split(' ')[0]}! If they like you back, you'll match.`;
+    }
+  });
+}
+</script>
+{% endblock %}

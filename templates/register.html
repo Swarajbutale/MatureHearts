@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Join SilverHeart{% endblock %}
+{% block extra_styles %}
+.auth-page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:3rem 1rem; }
+.auth-card { background:white; border-radius:24px; padding:2.5rem; width:100%; max-width:560px; box-shadow:0 12px 48px rgba(44,24,16,.12); }
+.auth-brand { text-align:center; margin-bottom:2rem; }
+.auth-brand a { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--gold); text-decoration:none; }
+.auth-brand p { color:var(--warm-grey); font-size:.9rem; margin-top:.3rem; }
+h2 { font-family:'Playfair Display',serif; font-size:1.6rem; margin-bottom:1.5rem; text-align:center; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.field { margin-bottom:1.2rem; }
+label { display:block; font-size:.83rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--warm-grey); margin-bottom:.4rem; }
+input, select, textarea { width:100%; padding:.7rem 1rem; border:1.5px solid var(--border); border-radius:10px; font-family:'Lato',sans-serif; font-size:.95rem; color:var(--deep); background:var(--cream); transition:.2s; outline:none; }
+input:focus, select:focus, textarea:focus { border-color:var(--gold); background:white; box-shadow:0 0 0 3px rgba(201,169,110,.12); }
+textarea { resize:vertical; min-height:80px; }
+.interests-grid { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.4rem; }
+.interest-chip { padding:.35rem .9rem; border-radius:99px; border:1.5px solid var(--border); font-size:.82rem; cursor:pointer; transition:.2s; background:var(--cream); color:var(--deep); }
+.interest-chip.selected { background:var(--gold); border-color:var(--gold); color:white; }
+#interests-hidden { display:none; }
+.submit-btn { width:100%; padding:.9rem; background:var(--gold); color:white; border:none; border-radius:99px; font-size:1rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; transition:.2s; margin-top:.5rem; }
+.submit-btn:hover { background:#b8935d; transform:translateY(-1px); box-shadow:0 6px 24px rgba(201,169,110,.4); }
+.auth-footer { text-align:center; margin-top:1.2rem; font-size:.9rem; color:var(--warm-grey); }
+.auth-footer a { color:var(--gold); font-weight:700; text-decoration:none; }
+{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <a href="/">♡ SilverHeart</a>
+      <p>Your next chapter starts here</p>
+    </div>
+    <h2>Create Your Profile</h2>
+
+    <form method="POST" action="/register">
+      <div class="form-row">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" name="name" required placeholder="Your name"/>
+        </div>
+        <div class="field">
+          <label>Age</label>
+          <input type="number" name="age" required min="45" max="99" placeholder="45+"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="you@email.com"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Choose a password"/>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Relationship Status</label>
+          <select name="status" required>
+            <option value="">Select...</option>
+            <option>Single</option>
+            <option>Widowed</option>
+            <option>Divorced</option>
+            <option>Separated</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>City / Location</label>
+          <input type="text" name="location" placeholder="e.g. Pune"/>
+        </div>
+        <div class="field">
+          <label>Looking For</label>
+          <select name="looking_for">
+            <option value="">Anyone</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>About You</label>
+        <textarea name="bio" placeholder="Tell people a little about yourself, your life, and what you enjoy..."></textarea>
+      </div>
+      <div class="field">
+        <label>Interests (select all that apply)</label>
+        <div class="interests-grid" id="interests-grid">
+          {% for interest in ["Travel","Reading","Music","Cooking","Yoga","Gardening","Movies","Cricket","Dancing","Photography","Fitness","Art","Chess","Nature","Spirituality","Volunteering","Family","Grandchildren"] %}
+          <div class="interest-chip" onclick="toggleInterest(this, '{{interest}}')">{{interest}}</div>
+          {% endfor %}
+        </div>
+        <input type="hidden" name="interests" id="interests-hidden"/>
+      </div>
+      <button type="submit" class="submit-btn">Join SilverHeart ♡</button>
+    </form>
+    <div class="auth-footer">Already a member? <a href="/login">Sign in</a></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let selected = [];
+function toggleInterest(el, val) {
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    selected = selected.filter(v => v !== val);
+  } else {
+    el.classList.add('selected');
+    selected.push(val);
+  }
+  document.getElementById('interests-hidden').value = selected.join(',');
+}
+</script>
+{% endblock %}
